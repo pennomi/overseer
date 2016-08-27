@@ -36,7 +36,7 @@ TILE_COSTS = {
 TILE_IMAGES = {
     TileType.ROAD: get_tile(1, 5),
     TileType.GROUND: get_tile(1, 6),
-    TileType.WATER: get_tile(0, 4),
+    TileType.WATER: get_tile(0, 5),
     TileType.TREE: get_tile(10, 6),
     TileType.STONE: get_tile(8, 4),
     TileType.BEDROCK: get_tile(9, 4),

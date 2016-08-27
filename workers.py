@@ -17,7 +17,7 @@ class Worker(pyglet.sprite.Sprite):
     speed = 32
 
     def __init__(self, x, y, world):
-        super().__init__(WORKER_IMAGE, x=x*16, y=y*16, batch=WORKERS_BATCH)
+        super().__init__(WORKER_IMAGE, x=x * 16, y=y * 16, batch=WORKERS_BATCH)
         self.path = []
         self.orders = None
         self.inventory = None
@@ -25,7 +25,7 @@ class Worker(pyglet.sprite.Sprite):
 
     @property
     def current_location(self):
-        return (self.x+8) // 16, (self.y+8) // 16
+        return (self.x + 8) // 16, (self.y + 8) // 16
 
     def update(self, dt):
         tile = self._world.tiles[self.current_location]
@@ -46,7 +46,8 @@ class Worker(pyglet.sprite.Sprite):
         elif isinstance(self.orders, Resource) and self.current_location == self.orders.location and not self.inventory:
             self._world.resources.remove(self.orders)
             self.inventory = self.orders
-            self.path = find_path(self._world, self.current_location, self._world.base.location)
+            self.path = find_path(
+                self._world, self.current_location, self._world.base.location)
             if not self.path:
                 self.orders = None
                 self.inventory = None
@@ -72,12 +73,14 @@ class Worker(pyglet.sprite.Sprite):
                     self.orders = tile
             # Try to get a resource
             elif self._world.resources:
-                other_orders = {w.orders for w in self._world.workers if w is not self}
-                targets = [w for w in self._world.resources if w not in other_orders]
+                other_orders = {
+                    w.orders for w in self._world.workers if w is not self}
+                targets = [
+                    w for w in self._world.resources if w not in other_orders]
                 if targets:
                     res = targets[0]
                     self.path = find_path(
-                        self._world, self.current_location, (res.x//16, res.y//16))
+                        self._world, self.current_location, (res.x // 16, res.y // 16))
                     self.orders = res
             return
         elif not self.path and self.orders:

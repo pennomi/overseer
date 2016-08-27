@@ -1,8 +1,7 @@
 from collections import defaultdict
 
 from pyramid import Pyramid
-from tiles import TileType, TILE_COSTS, WALKABLE_TYPES, DIGGABLE_TYPES, Tile, \
-    VISIBLE_TYPES
+from tiles import TileType, TILE_COSTS, WALKABLE_TYPES, DIGGABLE_TYPES, Tile
 
 
 class World:
