@@ -6,6 +6,7 @@ workers directly, but you can assign tasks and priorities.
 
 import pyglet
 
+from camera import Camera
 from generate_map import generate_simplex
 from interface import INTERFACE_BATCH
 
@@ -19,12 +20,17 @@ window = pyglet.window.Window(vsync=True)
 fps = pyglet.clock.ClockDisplay()
 
 
+CAMERA = Camera()
 WORLD = World()
 
 
 @window.event
 def on_draw():
+    # Setup
     window.clear()
+    CAMERA.pre_draw()  # TODO: Implement as a context manager
+
+    # Draw
     TERRAIN_BATCH.draw()
     ITEMS_BATCH.draw()
     WORKERS_BATCH.draw()
@@ -36,16 +42,40 @@ def on_draw():
     INTERFACE_BATCH.draw()
     fps.draw()
 
+    # Cleanup
+    CAMERA.post_draw()
+
 
 # noinspection PyUnusedLocal
 @window.event
 def on_mouse_press(x, y, button, modifiers):
-    point = (x//16, y//16)
+    # TODO: Undo the camera transform
+    point = CAMERA.untransform(x, y)
     if WORLD.tiles[point].type not in UNACTIONABLE_TYPES:
         WORLD.orders.add(point)
 
 
+# noinspection PyUnusedLocal
+@window.event
+def on_mouse_scroll(x, y, scroll_x, scroll_y):
+    if scroll_y > 0:
+        CAMERA.zoom *= 1.1
+    elif scroll_y < 0:
+        CAMERA.zoom *= 0.9
+
+
 def update(dt):
+    # Pan Camera
+    scroll_speed = 16 * 10
+    scroll_edges = 0.1
+    x = window._mouse_x
+    horizontal_hotspot = window.width * scroll_edges
+    if x < horizontal_hotspot:
+        CAMERA.x += scroll_speed * dt
+    elif x > window.width - horizontal_hotspot:
+        CAMERA.x -= scroll_speed * dt
+
+    # Update world logic
     for w in WORLD.workers:
         w.update(dt)
     for t in WORLD.tiles.values():
