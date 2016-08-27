@@ -8,9 +8,9 @@ import pyglet
 
 from camera import Camera
 from generate_map import generate_simplex
-from interface import INTERFACE_BATCH
+from interface import INTERFACE_BATCH, INTERFACE_BATCH2, Gauge
 
-from resources import ITEMS_BATCH
+from resources import ITEMS_BATCH, ResourceType
 from tiles import UNACTIONABLE_TYPES, TERRAIN_BATCH
 from workers import WORKERS_BATCH, Worker
 from world import World
@@ -22,6 +22,9 @@ fps = pyglet.clock.ClockDisplay()
 
 CAMERA = Camera()
 WORLD = World()
+stone_gauge = Gauge(ResourceType.STONE, 40)
+wood_gauge = Gauge(ResourceType.WOOD, 0)
+water_gauge = Gauge(ResourceType.WATER, 80)
 
 
 @window.event
@@ -44,7 +47,11 @@ def on_draw():
     CAMERA.post_draw()
 
     # Draw interface (non-transforming) widgets
+    water_gauge.draw(WORLD.base.inventory[ResourceType.WATER])
+    wood_gauge.draw(WORLD.base.inventory[ResourceType.WOOD])
+    stone_gauge.draw(WORLD.base.inventory[ResourceType.STONE])
     INTERFACE_BATCH.draw()
+    INTERFACE_BATCH2.draw()
     fps.draw()
 
 

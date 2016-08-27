@@ -35,7 +35,7 @@ TILE_COSTS = {
 TILE_IMAGES = {
     TileType.ROAD: get_tile(1, 5),
     TileType.GROUND: get_tile(1, 6),
-    TileType.WATER: get_tile(0, 4),
+    TileType.WATER: get_tile(0, 5),
     TileType.TREE: get_tile(10, 6),
     TileType.STONE: get_tile(8, 4),
     TileType.BEDROCK: get_tile(9, 4),
@@ -43,11 +43,12 @@ TILE_IMAGES = {
 
 
 class Tile(pyglet.sprite.Sprite):
+
     def __init__(self, tile_type: TileType, world, x=0, y=0):
         self.type = tile_type
         self.hp = TILE_COSTS[self.type]
         img = TILE_IMAGES[self.type]
-        super().__init__(img, x=x*16, y=y*16, batch=TERRAIN_BATCH)
+        super().__init__(img, x=x * 16, y=y * 16, batch=TERRAIN_BATCH)
         self.opacity = 0.0
         self._world = weakref.proxy(world)
 
