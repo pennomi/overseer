@@ -8,7 +8,7 @@ from pyglet.gl import gl
 
 from media import get_tile
 from resources import ResourceType, Resource
-
+from sprite import BetterSprite
 
 TERRAIN_BATCH = pyglet.graphics.Batch()
 
@@ -20,7 +20,7 @@ class TileType(enum.Enum):
     T = TREE = 3
     S = STONE = 4
     B = BEDROCK = 5
-
+    P = PYRAMID = 6
 
 TILE_COSTS = {
     TileType.ROAD: 0.5,
@@ -29,6 +29,7 @@ TILE_COSTS = {
     TileType.TREE: 2,
     TileType.STONE: 4,
     TileType.BEDROCK: math.inf,
+    TileType.PYRAMID: math.inf,
 }
 
 
@@ -39,26 +40,26 @@ TILE_IMAGES = {
     TileType.TREE: get_tile(10, 6),
     TileType.STONE: get_tile(8, 4),
     TileType.BEDROCK: get_tile(9, 4),
+    TileType.PYRAMID: get_tile(0, 0),
 }
 
 
-class Tile(pyglet.sprite.Sprite):
+class Tile(BetterSprite):
     def __init__(self, tile_type: TileType, world, x=0, y=0):
         self.type = tile_type
         self.hp = TILE_COSTS[self.type]
         img = TILE_IMAGES[self.type]
-        super().__init__(img, x=x*16, y=y*16, batch=TERRAIN_BATCH)
-        self.opacity = 0.0
+        super().__init__(img, x, y, TERRAIN_BATCH)
         self._world = weakref.proxy(world)
 
     def update(self, dt):
-        this_tile = (self.x // 16, self.y // 16)
-        if this_tile in self._world.orders:
-            self.color = (255, 0, 0)
-        elif this_tile in [w.orders for w in self._world.workers]:
-            self.color = (255, 0, 0)
-        else:
-            self.color = (255, 255, 255)
+        this_tile = self.location
+        # if this_tile in self._world.orders:
+        #     self.color = (255, 0, 0)
+        # elif this_tile in [w.orders for w in self._world.workers]:
+        #     self.color = (255, 0, 0)
+        # else:
+        #     self.color = (255, 255, 255)
 
     def draw_hp(self):
         full_hp = TILE_COSTS[self.type]
@@ -89,13 +90,12 @@ class Tile(pyglet.sprite.Sprite):
             self.type = new_type
             self.hp = TILE_COSTS[self.type]
             self.image = TILE_IMAGES[self.type]
-            # Update the map's visibility
-            self._world.calculate_revealed(self._world.base.location)
             return True
         return False
 
 
-WALKABLE_TYPES = [TileType.ROAD, TileType.GROUND, TileType.WATER]
-DIGGABLE_TYPES = [TileType.TREE, TileType.STONE]
-UNACTIONABLE_TYPES = [TileType.ROAD, TileType.BEDROCK]
-VISIBLE_TYPES = [TileType.GROUND, TileType.WATER, TileType.ROAD]
+WALKABLE_TYPES = [TileType.ROAD, TileType.GROUND]
+DIGGABLE_TYPES = [TileType.TREE, TileType.STONE, TileType.WATER]
+UNACTIONABLE_TYPES = [TileType.ROAD, TileType.BEDROCK, TileType.PYRAMID]
+VISIBLE_TYPES = [TileType.GROUND, TileType.WATER, TileType.ROAD, TileType.TREE,
+                 TileType.PYRAMID]

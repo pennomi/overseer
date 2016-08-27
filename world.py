@@ -12,26 +12,6 @@ class World:
     base = Pyramid(9, 9)
     workers = []
 
-    def calculate_revealed(self, start, calculated=None):
-        tile = self.tiles[start]
-        if not tile:
-            return
-
-        if not calculated:
-            calculated = {start}
-
-        tile.opacity = 255
-
-        # If it's solid, we stop here
-        if self.tiles[start].type not in VISIBLE_TYPES:
-            return
-
-        # Recurse
-        for t in self.neighbors_los(start):
-            if t not in calculated:
-                calculated.add(t)
-                self.calculate_revealed(t, calculated=calculated)
-
     def load(self, filename, world):
         for y, line in enumerate(open(filename, 'r')):
             for x, column in enumerate(line):

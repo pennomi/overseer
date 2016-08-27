@@ -1,11 +1,10 @@
-import pyglet
-
 from interface import STONE_PROGRESS, WOOD_PROGRESS, WATER_PROGRESS
 from media import get_tile
 from resources import ResourceType, ITEMS_BATCH
+from sprite import BetterSprite
 
 
-class Pyramid(pyglet.sprite.Sprite):
+class Pyramid(BetterSprite):
     inventory = {
         ResourceType.WOOD: 0,
         ResourceType.WATER: 0,
@@ -15,11 +14,7 @@ class Pyramid(pyglet.sprite.Sprite):
     def __init__(self, x, y):
         # TODO: Build a big, multi-tile pyramid that changes by completion
         image = get_tile(0, 1)
-        super().__init__(image, x=x*16, y=y*16, batch=ITEMS_BATCH)
-
-    @property
-    def location(self):
-        return self.x // 16, self.y // 16
+        super().__init__(image, x, y, ITEMS_BATCH)
 
     def add_item(self, item):
         self.inventory[item.type] += 1

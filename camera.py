@@ -2,17 +2,15 @@ from pyglet import gl
 
 
 class Camera:
-    zoom = 1.0
     x = 0.0
     y = 0.0
 
     def pre_draw(self):
         gl.glPushMatrix()
-        gl.glTranslatef(self.x, self.y, 0)
-        gl.glScalef(self.zoom, self.zoom, self.zoom)
+        gl.glTranslatef(int(self.x), int(self.y), 0)
 
     def post_draw(self):
         gl.glPopMatrix()
 
     def untransform_mouse(self, x, y):
-        return (x-self.x)/self.zoom//16, (y-self.y)/self.zoom//16
+        return (x-self.x)//16, (y-self.y)//16

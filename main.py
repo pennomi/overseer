@@ -2,7 +2,7 @@
 OVERSEER: A "macromanagement" pyramid construction game. You never control
 workers directly, but you can assign tasks and priorities.
 """
-
+import random
 
 import pyglet
 
@@ -34,8 +34,8 @@ def on_draw():
     TERRAIN_BATCH.draw()
     ITEMS_BATCH.draw()
     WORKERS_BATCH.draw()
-    for w in WORLD.workers:
-        w.debug_draw()
+    # for w in WORLD.workers:
+    #     w.debug_draw()
     for t in WORLD.tiles.values():
         if t:
             t.draw_hp()
@@ -57,27 +57,18 @@ def on_mouse_press(x, y, button, modifiers):
         WORLD.orders.add(point)
 
 
-# noinspection PyUnusedLocal
-@window.event
-def on_mouse_scroll(x, y, scroll_x, scroll_y):
-    if scroll_y > 0:
-        CAMERA.zoom *= 1.1
-    elif scroll_y < 0:
-        CAMERA.zoom *= 0.9
-
-
 def update(dt):
     # Pan Camera
     scroll_speed = 16 * 10
     scroll_edge_size = 20
     x, y = window._mouse_x, window._mouse_y
-    if x < scroll_edge_size:
+    if 0 < x < scroll_edge_size:
         CAMERA.x += scroll_speed * dt
-    elif x > window.width - scroll_edge_size:
+    elif window.width > x > window.width - scroll_edge_size:
         CAMERA.x -= scroll_speed * dt
-    if y < scroll_edge_size:
+    if 0 < y < scroll_edge_size:
         CAMERA.y += scroll_speed * dt
-    elif y > window.height - scroll_edge_size:
+    elif window.height > y > window.height - scroll_edge_size:
         CAMERA.y -= scroll_speed * dt
 
     # Update world logic
@@ -90,14 +81,13 @@ pyglet.clock.schedule_interval(update, 0.1)
 
 
 def main():
-    # TODO: Some sort of random seeding
-    generate_simplex('simplex.map', 30, 30)
+    size = 100
+    generate_simplex('simplex.map', size, seed=random.randint(0, 1000000))
     WORLD.load('simplex.map', WORLD)
-    WORLD.calculate_revealed(WORLD.base.location)
-    WORLD.workers.append(Worker(9, 8, WORLD))
-    WORLD.workers.append(Worker(9, 9, WORLD))
-    WORLD.workers.append(Worker(10, 8, WORLD))
-    WORLD.workers.append(Worker(10, 9, WORLD))
+    WORLD.workers.append(Worker(size // 2 + 4, size // 2, WORLD))
+    WORLD.workers.append(Worker(size // 2 + 4, size // 2 + 1, WORLD))
+    WORLD.workers.append(Worker(size // 2 - 3, size // 2, WORLD))
+    WORLD.workers.append(Worker(size // 2 - 3, size // 2 + 1, WORLD))
 
     # Run the game
     pyglet.app.run()
