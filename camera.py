@@ -14,5 +14,5 @@ class Camera:
     def post_draw(self):
         gl.glPopMatrix()
 
-    def untransform(self, x, y):
-        return (x-self.x)//16, (y-self.y)//16
+    def untransform_mouse(self, x, y):
+        return (x-self.x)/self.zoom//16, (y-self.y)/self.zoom//16
